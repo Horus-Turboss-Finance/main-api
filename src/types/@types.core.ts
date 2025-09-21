@@ -1,0 +1,1 @@
+export type CoreResponse<T = string> = Promise<[T, string]>;
