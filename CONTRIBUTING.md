@@ -99,14 +99,6 @@ Lors d'une revue de code, nous portons attention à :
 * Ne jamais hardcoder de valeurs sensibles (utiliser `production.env`)
 * Ne pas oublier de typer toutes les entrées/sorties de fonction
 
-## 🧪 Ajout de commandes Discord
-Les commandes sont déclarées dans `/commands/` sous forme de fichiers Javascript.
-Merci de suivre l'exemple de structure fourni pour :
-* L'organisation des arguments
-* La gestion des erreurs
-* L'appel aux services ou APIs
-* La réponse à l'utilisateur (`interaction.reply(...)`)
-
 ## 🙏 Merci !
 Merci de contribuer à rendre **Cash Sights - Bot Discord** plus utile, maintenable et évolutif !
 Pour toute question, n'hésitez pas à ouvrir une *issue* ou à contacter un membre de l'équipe core.
