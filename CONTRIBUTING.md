@@ -1,104 +1,201 @@
-# 🛠️ CONTRIBUTING.md  
-Merci de vouloir contribuer à **Cash Sights - Bot Discord Utilitaire** !  
+# 🛠️ CONTRIBUTING.md
+Merci de vouloir contribuer à **Cash Sights - API principale** !
 Ce document définit les bonnes pratiques de développement pour garantir un code robuste, lisible et maintenable.
 
+## 🧠 Préambule
+Tout développement doit :
+* Être basé sur une *issue* claire (feature, bug, amélioration)
+* Suivre le **GitFlow simplifié** du projet
+* Respecter les conventions de code définies dans ce document
+
 ## 🔧 Stack et Contexte
-- **Environnement** : Node.js + Discord.js
-- **Langage** : Javascript
-- **Gestion de versions** : Git
-- **Convention de commits** : [Gitmoji](https://gitmoji.dev/)
-- **Workflow Git** : GitFlow simplifié (cf. ci-dessous)
+
+* **Environnement** : Node.js + Express
+* **Langage** : TypeScript
+* **Base de données** : MYSQL
+* **Tests** : Jest (soon)
+* **Linting** : ESLint + Prettier
+* **Convention de commits** : [Gitmoji](https://gitmoji.dev/)
+* **Workflow Git** : GitFlow simplifié (voir ci-dessous)
 
 ## 📁 Structure du projet
-Le bot suit une structure modulaire claire (commands, events, services, utils). Merci de respecter cette architecture lors de l'ajout ou la modification de code.
+
+L'API est structurée de manière modulaire :
+
+```
+/src
+  /config
+  /controllers
+  /middlewares
+  /models
+  /routers
+  /services
+  /types
+  /utils
+```
+
+Merci de respecter cette architecture lors de l'ajout ou la modification de code.
 
 ## 📦 Installation du projet
 Avant de commencer le développement :
+
 ```bash
-npm install
-````
+pnpm install
+```
 
-Pense aussi à créer un fichier `production.env` à la racine du projet (voir le README pour le format).
+Crée aussi un fichier `development.env` (voir `.env.example` pour le format).
 
-## 🚦 Git Workflow
-Nous utilisons un **GitFlow simplifié** adapté aux projets applicatifs :
-* `main` → code stable en production
-* `develop` → branche de développement active
-* `feature/xxx` → ajout de fonctionnalité
-* `fix/xxx` → correction de bug
-* `hotfix/xxx` → correctif en production
+## 🗂️ Branching Strategy
+### 🔧 Types de branches
 
-### Exemple de cycle :
+| Type     | Préfixe     | Description                         | Base      | Destination |
+| -------- | ----------- | ----------------------------------- | --------- | ----------- |
+| Feature  | `feature/`  | Nouvelle fonctionnalité             | `develop` | `develop`   |
+| Fix      | `fix/`      | Correction non urgente              | `develop` | `develop`   |
+| Hotfix   | `hotfix/`   | Correction urgente en production    | `main`    | `main`      |
+| Refactor | `refactor/` | Refonte sans changement fonctionnel | `develop` | `develop`   |
+| Chore    | `chore/`    | Tâches techniques ou de maintenance | `develop` | `develop`   |
+
+### 🧾 Convention de nommage
 ```bash
-# Créer une branche de feature
+<type>/<issue-id>-<slug>
+```
+
+Exemples :
+* `feature/123-user-authentication`
+* `fix/234-crash-on-empty-request`
+
+## 🔄 Cycle complet d'une contribution
+### 1. 📌 Créer une issue
+* Décrire le contexte, le besoin et les critères d'acceptation
+* Taguer avec le bon label (`feature`, `bug`, `enhancement`, etc.)
+
+### 2. 🌱 Créer une branche
+```bash
 git checkout develop
 git pull
-git checkout -b feature/ajout-commande-kiff
-
-# Travailler sur la feature
-git commit -m ":sparkles: Ajout de la commande /kiff"
-git push origin feature/ajout-commande-kiff
-
-# Créer une pull request vers develop
+git checkout -b feature/123-user-authentication
 ```
 
-## ✍️ Règles de commit avec Gitmoji
-Nous utilisons **Gitmoji** pour garder un historique de commits expressif et clair.
+### 3. 💻 Développement
+* Respecter la structure du projet
+* Typage strict avec TypeScript
+* Aucun `console.log` dans les commits finaux
+* Utiliser des commits clairs et Gitmoji-compliants :
 
-### 🔑 Principaux gitmojis :
-| Emoji | Code          | Description                         |
-| ----- | ------------- | ----------------------------------- |
-| ✨    | `:sparkles:`  | Nouvelle fonctionnalité             |
-| 🐛    | `:bug:`       | Correction de bug                   |
-| ♻️    | `:recycle:`   | Refactoring                         |
-| 🔥    | `:fire:`      | Suppression de code inutile         |
-| 🧪    | `:test_tube:` | Ajout ou modification de tests      |
-| 📝    | `:memo:`      | MAJ de documentation                |
-| 🔧    | `:wrench:`    | MAJ de configuration / scripts      |
-| 🚚    | `:truck:`     | Déplacement ou renommage de fichier |
-
-### Exemple de commit :
 ```bash
-git commit -m ":bug: Correction du crash lors de l'appel API"
+git commit -m ":sparkles: Ajout de l'authentification utilisateur"
 ```
+
+#### Gitmojis fréquents :
+| Emoji | Code          | Description                 |
+| ----- | ------------- | --------------------------- |
+| ✨     | `:sparkles:`  | Nouvelle fonctionnalité     |
+| 🐛    | `:bug:`       | Correction de bug           |
+| ♻️    | `:recycle:`   | Refactoring                 |
+| 🔥    | `:fire:`      | Suppression de code inutile |
+| 🧪    | `:test_tube:` | Ajout ou MAJ de tests       |
+| 📝    | `:memo:`      | MAJ de documentation        |
+
+### 4. ⬆️ Push & Pull Request
+```bash
+git push origin feature/123-user-authentication
+```
+
+* Créer une **PR vers `develop`**
+* Utiliser un template (si disponible)
+* Vérifier que les tests passent, le linter aussi
+
+### 5. 🔍 Code Review
+* Min. 1 relecture (core team)
+* Points vérifiés :
+  * Lisibilité du code
+  * Respect de la structure
+  * Typage TypeScript
+  * Couverture de test
+  * Pas de console.log / code mort
+  * Commit messages clairs
 
 ## ✅ Tests & Vérifications
-Avant toute **pull request**, merci de :
-1. Lancer les tests (soon) :
+Avant de créer une **pull request**, merci de :
+
+1. Vérifier que l'app se build :
    ```bash
-   npm run test
+   pnpm build
+   ```
+2. Lancer les tests (soon) :
+   ```bash
+   pnpm test
+   ```
+3. Vérifier le linter :
+   ```bash
+   pnpm lint
+   ```
+4. Vérifier que le code fonctionne en local :
+   ```bash
+   pnpm dev
    ```
 
-2. Vérifier que le bot fonctionne localement (en mode dev) :
-   ```bash
-   npm run dev
-   ```
+## 🎯 Releases & Versioning
+### 📦 Semantic Versioning (SemVer)
 
-## 📥 Création d'une Pull Request
-Une PR propre doit :
-* Être basée sur `develop` (jamais `main`)
-* Avoir un titre explicite et une description claire
-* Passer les tests
-* Être relue et approuvée par **au moins 1 membre de l'équipe core**
-* Inclure des commentaires si une logique complexe est ajoutée
+```
+MAJOR.MINOR.PATCH[-label]
+```
 
-## 💬 Code Review
-Lors d'une revue de code, nous portons attention à :
-* Lisibilité et clarté du code
-* Respect de l'architecture modulaire
-* Utilisation cohérente des services, commandes et événements
-* Gestion propre des erreurs (try/catch, logs)
-* Tests associés si pertinents
-* Messages de commit clairs et bien formatés
-* Aucune console.log / TODO non justifié
+| Type  | Cas d'usage                       |
+| ----- | --------------------------------- |
+| MAJOR | Changement cassant                |
+| MINOR | Nouvelle feature rétro-compatible |
+| PATCH | Fix / amélioration mineure        |
 
-## 🧹 Normes de Code
-* Favoriser les fonctions pures et services isolés
-* Utiliser `async/await` avec gestion des erreurs propre
-* Préférer les noms explicites plutôt que les abréviations
-* Ne jamais hardcoder de valeurs sensibles (utiliser `production.env`)
-* Ne pas oublier de typer toutes les entrées/sorties de fonction
+Labels pré-release :
+* `-alpha`, `-beta`, `-rc.X`
+
+### 🛠️ Processus de release
+1. Merger les PRs dans `develop`
+2. Release :
+```bash
+git checkout main
+git pull
+git merge develop
+git tag -a v1.5.0 -m "Release v1.5.0"
+git push origin main --tags
+```
+
+3. CI déclenche le déploiement
+4. Synchroniser `develop` si hotfix :
+
+```bash
+git checkout develop
+git pull origin main
+```
+
+## 🧪 Checklist post-merge
+* [ ] Build OK (`pnpm build`)
+* [ ] Tests passent (`pnpm test`)
+* [ ] Lint propre (`pnpm lint`)
+* [ ] Fonctionne en local (`pnpm dev`)
+* [ ] Changelog mis à jour (si applicable)
+* [ ] Issue associée **clôturée**
+
+## 📝 Pull Request propre
+Une PR valide doit :
+* Utiliser un titre clair
+* Avoir une description explicite
+* Référencer l'issue concernée
+* Avoir des tests (si logique complexe)
+* Être validée par un core reviewer
+
+## 🧹 Normes de code
+* Utiliser des fonctions pures & services isolés
+* Gestion d'erreurs propre (`try/catch`, logs)
+* Éviter les abréviations non standards
+* Ne **jamais** hardcoder de valeurs sensibles
+* Typage strict (params, retour, erreurs)
 
 ## 🙏 Merci !
-Merci de contribuer à rendre **Cash Sights - Bot Discord** plus utile, maintenable et évolutif !
-Pour toute question, n'hésitez pas à ouvrir une *issue* ou à contacter un membre de l'équipe core.
+Merci de contribuer à **Cash Sights - API** !
+Votre rigueur garantit la stabilité, la qualité et l'évolutivité du backend de la plateforme.
+
+Pour toute question, n'hésitez pas à ouvrir une *issue* ou contacter l'équipe core.
