@@ -17,7 +17,7 @@ module.exports = {
       "ref"  : "origin/main",
       "repo" : "git@github.com:Horus-Turboss-Finance/main-api.git",
       "path" : "~/cashsight/backend",
-      "post-deploy": `npm run preproduction`,
+      "post-deploy": `npm run production`,
     }
   }
 }
