@@ -22,7 +22,7 @@ const selectColumns = {
   icon: tBankAccount.icon,
 };
 
-type hackType = {
+export type BankFindReturnType = {
   id: number;
   balance: number|string;
   type: string;
@@ -37,7 +37,7 @@ export class BankAccount {
       .where(tBankAccount.userId.equals(userId))
       .select(selectColumns)
       .executeSelectMany()
-      .then((v : hackType[]) => {
+      .then((v : BankFindReturnType[]) => {
          return v.map((aV) => {
           aV.balance = Number(aV.balance)/100;
           return aV
@@ -52,7 +52,7 @@ export class BankAccount {
       .where(tBankAccount.id.equals(id).and(tBankAccount.userId.equals(userId)))
       .select(selectColumns)
       .executeSelectOne()
-      .then((aV:hackType) => {
+      .then((aV:BankFindReturnType) => {
           aV.balance = Number(aV.balance)/100;
           return aV
       })

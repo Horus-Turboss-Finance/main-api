@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { catchSync } from "../middleware/catchError";
+import { FINANCIAL_PLATFORMS } from "../types/financial-platforms.types";
 import { ensureAtLeastOneField, handleCoreResponse } from '../utils/handleCoreResponse';
-import { FINANCIAL_PLATFORMS } from "../types/@types.bankAccount";
 import { 
   getUserIdOrThrow, 
   validateBankAccountInput, 
