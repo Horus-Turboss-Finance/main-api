@@ -1,4 +1,3 @@
-import { Request, Response } from 'express';
 import { catchSync } from "../middleware/catchError";
 import { newMessagePostCore } from "../services/contact.core";
 import { handleCoreResponse } from "../utils/handleCoreResponse";
@@ -7,7 +6,7 @@ import { validateAndNormalizeEmail, validateBooleanField, validateStringField } 
 /**
  * Contrôleur pour la création d'un nouveau message/contact
  */
-export const newMessagePost = catchSync(async (req: Request, res: Response) => {
+export const newMessagePost = catchSync(async (req, res) => {
   const { email: rawEmail, firstName, lastName, message, isChecked } = req.body ?? {};
 
   const email = validateAndNormalizeEmail(rawEmail);

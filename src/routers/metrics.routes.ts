@@ -1,14 +1,14 @@
 import { ResponseException } from '../middleware/responseException';
 import { catchSync } from '../middleware/catchError';
-import express, { Request, Response } from 'express';
+import express, { RequestHandler } from 'express';
 import client from "prom-client";
 
 /**
  * Endpoint pour exposer les métriques Prometheus
  */
-export default express.Router().get("/", catchSync(async (req: Request, res: Response) => {
-  let metrics = await client.register.getMetricsAsJSON();
+export default express.Router().get("/", catchSync(async (req, res) => {
+  const metrics = await client.register.getMetricsAsJSON();
   
-  let clientResponse = ResponseException(JSON.stringify(metrics)).Success()
+  const clientResponse = ResponseException(JSON.stringify(metrics)).Success()
   res.status(clientResponse.status).json(clientResponse);
-}));
+}) as RequestHandler);

@@ -1,4 +1,3 @@
-import { Request, Response } from "express";
 import { catchSync } from "../middleware/catchError";
 import { FINANCIAL_PLATFORMS } from "../types/financial-platforms.types";
 import { ensureAtLeastOneField, handleCoreResponse } from '../utils/handleCoreResponse';
@@ -19,31 +18,30 @@ import {
 } from "../services/settings.core";
 
 // ----------------- BANK ACCOUNTS -----------------
-export const listBankAccounts = catchSync(async (req: Request, res: Response) => {
+export const listBankAccounts = catchSync(async (req, res) => {
   const userId = getUserIdOrThrow(req);
   await handleCoreResponse(() => getBankAccounts({ userId }), res);
 });
 
-export const addBankAccount = catchSync(async (req: Request, res: Response) => {
+export const addBankAccount = catchSync(async (req, res) => {
   const userId = getUserIdOrThrow(req);
-  let { label, type, balance, icon } = req.body ?? {};
+  const { label, type, balance, icon } = req.body ?? {};
 
   validateBankAccountInput({ label, type, balance, icon });
 
-  icon = FINANCIAL_PLATFORMS[icon as keyof typeof FINANCIAL_PLATFORMS]
+  const ParsedIcon = FINANCIAL_PLATFORMS[icon as keyof typeof FINANCIAL_PLATFORMS]
   
-  await handleCoreResponse(() => createBankAccount({ userId, label, type, balance, icon }), res);
+  await handleCoreResponse(() => createBankAccount({ userId, label, type, balance, icon: ParsedIcon }), res);
 });
 
-export const editBankAccount = catchSync(async (req: Request, res: Response) => {
+export const editBankAccount = catchSync(async (req, res) => {
   const userId = getUserIdOrThrow(req);
   const { id } = req.params;
-  let { label, balance } = req.body ?? {};
+  const { label, balance } = req.body ?? {};
 
   ensureAtLeastOneField({ label, balance })
 
   validateBankAccountInput({ label, balance, partial: true });
-  
 
   await handleCoreResponse(() =>
     updateBankAccount({ id: Number(id), userId, data: { label, balance } }),
@@ -51,19 +49,19 @@ export const editBankAccount = catchSync(async (req: Request, res: Response) => 
   );
 });
 
-export const removeBankAccount = catchSync(async (req: Request, res: Response) => {
+export const removeBankAccount = catchSync(async (req, res) => {
   const userId = getUserIdOrThrow(req);
   const { id } = req.params;
   await handleCoreResponse(() => deleteBankAccount({ id: Number(id), userId }), res);
 });
 
 // ----------------- TRANSACTION CATEGORIES -----------------
-export const listTransactionCategories = catchSync(async (req: Request, res: Response) => {
+export const listTransactionCategories = catchSync(async (req, res) => {
   const userId = getUserIdOrThrow(req);
   await handleCoreResponse(() => getTransactionCategories({ userId }), res);
 });
 
-export const addTransactionCategory = catchSync(async (req: Request, res: Response) => {
+export const addTransactionCategory = catchSync(async (req, res) => {
   const userId = getUserIdOrThrow(req);
   const { name, icon, base, type } = req.body ?? {};
   
@@ -72,7 +70,7 @@ export const addTransactionCategory = catchSync(async (req: Request, res: Respon
   await handleCoreResponse(() => createTransactionCategory({ userId, name, icon, base_category: base, type }), res);
 });
 
-export const editTransactionCategory = catchSync(async (req: Request, res: Response) => {
+export const editTransactionCategory = catchSync(async (req, res) => {
   const userId = getUserIdOrThrow(req);
   const { id } = req.params;
   const { name, icon } = req.body ?? {};
@@ -84,7 +82,7 @@ export const editTransactionCategory = catchSync(async (req: Request, res: Respo
   await handleCoreResponse(() => updateTransactionCategory({ id: Number(id), userId, name, icon }), res);
 });
 
-export const removeTransactionCategory = catchSync(async (req: Request, res: Response) => {
+export const removeTransactionCategory = catchSync(async (req, res) => {
   const userId = getUserIdOrThrow(req);
   const { id } = req.params;
 

@@ -1,4 +1,5 @@
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction, Request } from "express";
+import { CustomRequest } from "../types/user.types";
 import { logger } from "../services/logger";
 
 /**
@@ -7,7 +8,7 @@ import { logger } from "../services/logger";
  * - Accès refusés (403)
  * - Rate-limit trigger
  */
-export const securityLogger = (req: Request, res: Response, next: NextFunction) => {
+export const securityLogger = (req: Request & CustomRequest, res: Response, next: NextFunction) => {
   res.on("finish", () => {
     if (res.statusCode === 403) {
       logger.warn("Access Denied", {

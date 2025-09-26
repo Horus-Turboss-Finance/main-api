@@ -1,4 +1,3 @@
-import { Request, Response, NextFunction } from "express";
 import { getUserRoleOrThrow } from "../utils/validation";
 import { ResponseException } from "./responseException";
 import { PermissionType } from "../types/@types.roles";
@@ -15,7 +14,7 @@ const permissionsManager = new PermissionsManager();
  * @returns Middleware Express
  */
 export const checkPermission = (requiredPermission: PermissionType) =>
-catchSync(async (req: Request, _res: Response, next: NextFunction) => {
+catchSync(async (req, res, next) => {
   const role = getUserRoleOrThrow(req);
 
   if (!permissionsManager.hasPermission(role, requiredPermission)) {

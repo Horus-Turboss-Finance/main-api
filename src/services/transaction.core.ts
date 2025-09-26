@@ -73,7 +73,7 @@ export const createTransaction = async ({
       await validateResourcesOwnership(userId, { bankId, categoryId });
       
       if(bankId) {
-        let bank = await BankAccount.findById({id: bankId, userId});
+        const bank = await BankAccount.findById({id: bankId, userId});
         BankAccount.updateById({ id: bankId, userId , data : { balance: Number(bank.balance) + (type == "credit" ? amount : amount * -1) }});
       }
       return Transaction.insert({ userId, bankId, categoryId, baseCategory, amount, type, status, date, description });

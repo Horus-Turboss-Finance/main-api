@@ -1,4 +1,3 @@
-import { NextFunction, Request, Response } from "express";
 import { ResponseException } from "./responseException";
 import { User } from "../models/user.models";
 import { catchSync } from "./catchError";
@@ -7,7 +6,7 @@ import { catchSync } from "./catchError";
  * Middleware d'authentification
  * Extrait et vérifie le token Bearer puis injecte l'utilisateur dans req.user
  */
-export const isAuth = catchSync(async (req : Request, res : Response, next : NextFunction) => {
+export const isAuth = catchSync(async (req, res, next) => {
   let token = req.cookies?.token;
   
   if (!token && req.headers.authorization) {

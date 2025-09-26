@@ -1,5 +1,5 @@
-import { Request } from "express";
 import { RoleType } from "../types/@types.roles";
+import { CustomRequest } from "../types/user.types";
 import { BankAccount } from "../models/bankAccount.models";
 import { validate as validateEmail } from "email-validator";
 import { ResponseException } from "../middleware/responseException";
@@ -100,7 +100,7 @@ export async function validateResourcesOwnership(userId: number, data: { categor
 /**
  * Récupère le rôle utilisateur ou lance une erreur
  */
-export const getUserRoleOrThrow = (req: Request): RoleType => {
+export const getUserRoleOrThrow = (req: CustomRequest): RoleType => {
   const role = req.user?.role as RoleType | undefined;
   if (!role) throw ResponseException("Role manquant").Unauthorized();
   return role;
@@ -109,7 +109,7 @@ export const getUserRoleOrThrow = (req: Request): RoleType => {
 /**
  * Récupère l'ID utilisateur ou lance une erreur
  */
-export function getUserIdOrThrow(req: Request) {
+export function getUserIdOrThrow(req: CustomRequest) {
   const userId = req.user?.id;
   if (!userId) throw ResponseException("Utilisateur non authentifié").Unauthorized();
   return userId;
@@ -128,7 +128,7 @@ export function validateBankAccountInput({
   partial = false,
 }: {
   label?: string;
-  type?: any;
+  type?: unknown;
   balance?: number;
   icon?: string;
   partial?: boolean;
@@ -150,7 +150,7 @@ export function validateTransactionCategoryInput({
   partial = false,
 }: {
   name?: string;
-  icon?: any;
+  icon?: unknown;
   base?: string;
   type?: number;
   partial?: boolean;

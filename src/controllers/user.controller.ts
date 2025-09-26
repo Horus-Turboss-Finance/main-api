@@ -1,4 +1,3 @@
-import { Request, Response } from "express";
 import { catchSync } from "../middleware/catchError";
 import { ensureAtLeastOneField, handleCoreResponse } from "../utils/handleCoreResponse";
 import { getUserProfile, updateUserProfile, deleteUserAccount, updateUserEmail, updateUserPassword } from "../services/user.core";
@@ -7,7 +6,7 @@ import { getUserIdOrThrow, validateAndNormalizeEmail, validateStringField } from
 /**
  * GET /user/@me
  */
-export const getMyProfile = catchSync(async (req: Request, res: Response) => {
+export const getMyProfile = catchSync(async (req, res) => {
   const id = getUserIdOrThrow(req);
   await handleCoreResponse(() => getUserProfile({ id }), res);
 });
@@ -15,7 +14,7 @@ export const getMyProfile = catchSync(async (req: Request, res: Response) => {
 /**
  * PUT /user/@me
  */
-export const updateMyProfile = catchSync(async (req: Request, res: Response) => {
+export const updateMyProfile = catchSync(async (req, res) => {
   const id = getUserIdOrThrow(req);
   const { pseudo, name } = req.body ?? {};
 
@@ -30,9 +29,10 @@ export const updateMyProfile = catchSync(async (req: Request, res: Response) => 
 /**
  * PUT /user/@me/email
  */
-export const updateMyEmail = catchSync(async (req: Request, res: Response) => {
+export const updateMyEmail = catchSync(async (req, res) => {
   const id = getUserIdOrThrow(req);
-  let { email, password } = req.body ?? {};
+  const { password } = req.body ?? {};
+  let { email } = req.body ?? {};
 
   email = validateAndNormalizeEmail(email);
   validateStringField(password, "Password");
@@ -43,7 +43,7 @@ export const updateMyEmail = catchSync(async (req: Request, res: Response) => {
 /**
  * PUT /user/@me/credential
  */
-export const updateMyPassword = catchSync(async (req: Request, res: Response) => {
+export const updateMyPassword = catchSync(async (req, res) => {
   const id = getUserIdOrThrow(req);
   const { oldPassword, newPassword } = req.body ?? {};
 
@@ -56,7 +56,7 @@ export const updateMyPassword = catchSync(async (req: Request, res: Response) =>
 /**
  * DELETE /user/@me
  */
-export const deleteMyAccount = catchSync(async (req: Request, res: Response) => {
+export const deleteMyAccount = catchSync(async (req, res) => {
   const id = getUserIdOrThrow(req);
   await handleCoreResponse(() => deleteUserAccount({ id }), res);
 });

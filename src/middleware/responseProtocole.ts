@@ -1,4 +1,5 @@
-import { ResponseException } from "./responseException";
+import { ClassResponseExceptions, ResponseException } from "./responseException";
+import { NextFunction, Request, Response } from "express";
 import { logger } from "../services/logger";
 
 /**
@@ -6,15 +7,20 @@ import { logger } from "../services/logger";
  * - Standardise le format JSON de sortie
  * - Log les erreurs 500 côté serveur
  */
-export const ResponseProtocole = (err: Error & any, req: any, res: any, next: any) => {
+export const ResponseProtocole = (err: Error &  {
+    status: number;
+    data: string;
+} & unknown, req: Request, res: Response, next: NextFunction) => {
   const originalError = err;
 
-  if (!("status" in err)) {
-    err = ResponseException().UnknownError();
+  let firstResponse = ResponseException().UnknownError();
+  
+  if (err instanceof ClassResponseExceptions) {
+    firstResponse = err;
   }
 
   // Log uniquement les erreurs serveur critiques
-  if (err.status >= 500) {
+  if (!firstResponse || firstResponse.status >= 500) {
     logger.error("Server Error", {
       message: originalError.message,
       stack: originalError.stack,
@@ -25,4 +31,5 @@ export const ResponseProtocole = (err: Error & any, req: any, res: any, next: an
   }
 
   return res.status(err.status).json(err);
+  next();
 };
