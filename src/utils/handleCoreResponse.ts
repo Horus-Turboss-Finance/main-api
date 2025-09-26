@@ -4,7 +4,7 @@ import { logger } from "../services/logger";
 import { ResponseException, ResponseCodeKey, HTTP_CODE } from "../middleware/responseException";
 import { CoreResponse } from "../types/@types.core";
 
-type fileHandle = "auth"|"newsletter"|"settings"|"user"|"contact"|"transaction"
+type fileHandle = "auth"|"newsletter"|"settings"|"user"|"contact"|"transaction"|"kiff-score"
 
 /**
  * Utilitaire générique pour renvoyer une réponse standardisée depuis un core service

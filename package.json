@@ -5,10 +5,6 @@
   "license": "ISC",
   "scripts": {
     "commit": "gitmoji -c",
-    "release": "standard-version",
-    "release:patch": "npm run release -- --release-as patch",
-    "release:minor": "npm run release -- --release-as minor",
-    "release:major": "npm run release -- --release-as major",
     "age:c:api": "age -a -o ./crypted-env -R ./keys/age-public.pem api.production.env",
     "age:d:api": "age -d -o ./production.env -i ./keys/sops-key ./crypted-env",
     "production:d:api": "age -o ./production.env -i ~/.ssh/age-key crypted-env",
@@ -39,7 +35,6 @@
   "devDependencies": {
     "@eslint/js": "^9.30.1",
     "eslint": "^9.30.1",
-    "standard-version": "^9.5.0",
     "@types/jsdom": "^21.1.7",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.35.1",

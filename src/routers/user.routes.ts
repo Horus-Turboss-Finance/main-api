@@ -2,6 +2,7 @@ import express from 'express';
 import { isAuth } from '../middleware/auth';
 import { Permissions } from '../types/@types.roles';
 import { checkPermission } from '../middleware/roles';
+import { getKiffScore } from '../controllers/kiff-score.controller';
 import { getMyProfile, updateMyProfile, deleteMyAccount, updateMyEmail, updateMyPassword } from '../controllers/user.controller';
 
 const router = express.Router();
@@ -19,6 +20,13 @@ router.get('/@me', isAuth, checkPermission(Permissions.UserViewOwn), getMyProfil
  * @access Authenticated
  */
 router.put('/@me', isAuth, checkPermission(Permissions.UserUpdateOwn), updateMyProfile);
+
+/**
+ * @route GET /user/@me/kiff-score
+ * @desc Récupère le kiff score de l'utilisateur
+ * @access Authenticated
+ */
+router.get('/@me/kiff-score', isAuth, checkPermission(Permissions.UserViewOwn), getKiffScore);
 
 /**
  * @route PUT /user/@me/email
