@@ -1,5 +1,4 @@
 import { RoleType } from "../types/@types.roles";
-import { CustomRequest } from "../types/user.types";
 import { BankAccount } from "../models/bankAccount.models";
 import { validate as validateEmail } from "email-validator";
 import { ResponseException } from "../middleware/responseException";
@@ -7,6 +6,7 @@ import { TransactionCategory } from "../models/transactionCategory.models";
 import { ALLOWED_BANK_ACCOUNT_TYPES } from "../types/bank-account.types";
 import { FINANCIAL_PLATFORMS_ICON_KEY } from "../types/financial-platforms.types";
 import { defaultCategories, TRANSACTION_ICON_CATEGORY } from "../types/@types.transactionCategoryIcons";
+import { Request } from "express";
 
 /** ===================== Generic Validators ===================== */
 
@@ -100,7 +100,7 @@ export async function validateResourcesOwnership(userId: number, data: { categor
 /**
  * Récupère le rôle utilisateur ou lance une erreur
  */
-export const getUserRoleOrThrow = (req: CustomRequest): RoleType => {
+export const getUserRoleOrThrow = (req: Request): RoleType => {
   const role = req.user?.role as RoleType | undefined;
   if (!role) throw ResponseException("Role manquant").Unauthorized();
   return role;
@@ -109,7 +109,7 @@ export const getUserRoleOrThrow = (req: CustomRequest): RoleType => {
 /**
  * Récupère l'ID utilisateur ou lance une erreur
  */
-export function getUserIdOrThrow(req: CustomRequest) {
+export function getUserIdOrThrow(req: Request) {
   const userId = req.user?.id;
   if (!userId) throw ResponseException("Utilisateur non authentifié").Unauthorized();
   return userId;

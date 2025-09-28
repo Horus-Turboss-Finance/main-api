@@ -18,6 +18,8 @@ import { calculateStabilityScore } from "../utils/kiff/calculate-stability-score
 import { calculateSurvivalMonths } from "../utils/kiff/calculate-survival-months";
 import { KiffOptions, KiffResult } from "../types/kiff-score.types";
 import {
+  computeDataConfidence,
+  detectOutlierSpending,
   fetchUserAccounts,
   fetchUserTransactions,
   splitTransactions,
@@ -47,6 +49,11 @@ export async function calculateKiffScoreForUser(userId: number, options: KiffOpt
         fetchUserTransactions(userId, options.transactionLimit ?? 10000),
       ]);
 
+      const mounthFilter = new Date();
+      mounthFilter.setMonth(mounthFilter.getMonth() - 2);
+
+      const isLowData = transactions.length < 10 || new Set(transactions.filter(t => new Date(t.date).getTime() > mounthFilter.getTime() )).size < 2;
+
       const reserve = calculateReserve(accounts);
       const { credits, debits } = splitTransactions(transactions);
 
@@ -60,18 +67,44 @@ export async function calculateKiffScoreForUser(userId: number, options: KiffOpt
         lastDayOfMonth,
       });
 
-      const kiffRaw = Math.min(annual.annualKiff, monthly.monthlyKiff);
-      const cushion = calculateCushion(reserve, annual.annualBudget);
-      const adjustedKiff = kiffRaw + cushion;
+      const isOutlierCase = detectOutlierSpending(debits);
+      const dataConfidence = computeDataConfidence(debits);
+
+      let kiffRaw = Math.min(annual.annualKiff, monthly.monthlyKiff);
+      let adjustedKiff = kiffRaw;
+      let cushion = 0;
+
+      if (isLowData) {
+        const isNegativeOrNearZero = reserve <= 0 || monthly.monthlyRemainingBudget < 0;
+        const reservePerDay = reserve / Math.max(1, daysLeftInMonth);
+        const bvmPerDay = BVM / 30;
+
+        const reserveFactor = Math.min(1, reservePerDay / bvmPerDay);
+        const budgetFactor = Math.min(1, Math.max(0, monthly.monthlyRemainingBudget / (BVM / 2)));
+
+        if (isNegativeOrNearZero && isOutlierCase) {
+          // Fallback très prudent si données faibles et transaction suspecte
+          kiffRaw = 0.2 + 0.3 * reserveFactor;
+        } else {
+          const base = 0.1 + 0.4 * reserveFactor + 0.2 * budgetFactor;
+          kiffRaw = base * dataConfidence + (1 - dataConfidence) * 0.1;
+          kiffRaw = Math.min(0.95, Math.max(0.05, kiffRaw));
+        }
+
+        cushion = calculateCushion(reserve, BVM * 12);
+        adjustedKiff = Math.min(1, kiffRaw + cushion * 0.5);
+      } else {
+        cushion = calculateCushion(reserve, annual.annualBudget);
+        adjustedKiff = Math.min(1, kiffRaw + cushion);
+      }
 
       const survivalMonths = calculateSurvivalMonths(debits);
       const { mood, stabilityScore } = calculateStabilityScore(survivalMonths, kiffRaw);
 
       return {
-        date: today,
+        mode: isLowData ? 'low-data' : 'normal',
         nb_personne_foyer: nbPeople,
         BVM: round2(BVM),
-        nombre_jour_restant_mensuel: daysLeftInMonth,
         budget_mensuel_restant: round2(monthly.monthlyRemainingBudget),
         kiff_brut_mensuel: round2(monthly.monthlyKiff),
         budget_annuel: round2(annual.annualBudget),

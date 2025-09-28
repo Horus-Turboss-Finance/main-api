@@ -14,10 +14,9 @@ export type KiffOptions = {
 };
 
 export type KiffResult = {
-  date: Date;
+  mode: string,
   nb_personne_foyer: number;
   BVM: number;
-  nombre_jour_restant_mensuel: number;
   budget_mensuel_restant: number;
   kiff_brut_mensuel: number;
   budget_annuel: number;

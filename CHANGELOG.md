@@ -1,7 +1,15 @@
 # Changelog
 
-<a name="next"></a>
-## next
+<a name="1.1.0"></a>
+## 1.1.0 (2025-09-26)
+
+### Added
+
+- ✨ Ajout du kiff score [[be9f79c](https://github.com/Horus-Turboss-Finance/main-api/commit/be9f79c1e20a92b5b8f5b8b02423c06f5a51f439)]
+
+### Changed
+
+- 🚨 Update type for linter warnings [[1516251](https://github.com/Horus-Turboss-Finance/main-api/commit/151625158e3145f7c795cb0fae9d626881a210f1)]
 
 ### Miscellaneous
 
