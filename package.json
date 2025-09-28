@@ -1,14 +1,10 @@
 {
   "name": "backend-cashsight",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "author": "Horus Turboss <docteur.turboss@gmail.com>",
   "license": "ISC",
   "scripts": {
     "commit": "gitmoji -c",
-    "release": "standard-version",
-    "release:patch": "npm run release -- --release-as patch",
-    "release:minor": "npm run release -- --release-as minor",
-    "release:major": "npm run release -- --release-as major",
     "age:c:api": "age -a -o ./crypted-env -R ./keys/age-public.pem api.production.env",
     "age:d:api": "age -d -o ./production.env -i ./keys/sops-key ./crypted-env",
     "production:d:api": "age -o ./production.env -i ~/.ssh/age-key crypted-env",
@@ -16,8 +12,8 @@
     "build": "tsc -p ./tsconfig.json",
     "staging-preprod": "npm run age:d:api && pm2 startOrReload ./ecosystem.config.js",
     "lint": "eslint .",
-    "preproduction": "npm install && npm run production:d:api",
-    "production": "node --env-file=production.env ./dist/index.js"
+    "preproduction": "npm install && npm run build && npm run production:d:api",
+    "production": "pm2 startOrReload ./ecosystem.config.js"
   },
   "description": "",
   "dependencies": {
@@ -39,7 +35,6 @@
   "devDependencies": {
     "@eslint/js": "^9.30.1",
     "eslint": "^9.30.1",
-    "standard-version": "^9.5.0",
     "@types/jsdom": "^21.1.7",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.35.1",

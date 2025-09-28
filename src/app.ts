@@ -5,7 +5,7 @@ import rateLimit from "express-rate-limit";
 import fileUpload from "express-fileupload";
 import express, { Request, Response, Router } from "express";
 
-import './types/@types.user';
+import './types/user.types';
 
 import AuthRoutes from "./routers/auth.routes";
 import UserRoutes from "./routers/user.routes";
@@ -49,7 +49,7 @@ const corsOptions: CorsOptions = {
     if (!origin || whitelist.some(w => typeof w === "string" ? w === origin : w.test(origin))) {
       callback(null, true);
     } else {
-      callback(ResponseException("Origine CORS non autorisée").Forbidden() as any);
+      callback(ResponseException("Origine CORS non autorisée").Forbidden() as unknown as Error);
     }
   },
   methods: ["GET", "POST", "PUT", "DELETE"],
@@ -95,13 +95,13 @@ apiRoutes.forEach(([path, router]) => app.use(path, router));
 
 /** ===================== Health Check ===================== */
 app.get('/ping', catchSync(async(req : Request, res: Response)=> {
-    let response = ResponseException("Service en ligne").Success();
+    const response = ResponseException("Service en ligne").Success();
     res.status(response.status).json({data:response.data});
 }));
 
 /** ===================== 404 Handler ===================== */
 app.use(/(.*)/, catchSync(async(req : Request, res: Response) => {
-    let response = ResponseException("Chemin ou méthode non supporté.").NotFound();
+    const response = ResponseException("Chemin ou méthode non supporté.").NotFound();
     res.status(response.status).json({data:response.data});
 }))
 

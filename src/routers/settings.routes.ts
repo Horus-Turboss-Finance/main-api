@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { RequestHandler, Router } from "express";
 import {
   listBankAccounts,
   addBankAccount,
@@ -17,15 +17,15 @@ const router = Router();
 const perms = new PermissionsManager();
 
 // ----- BANK ACCOUNTS -----
-router.get("/accounts", isAuth, checkPermission(perms.Permissions.BankAccountViewOwn), listBankAccounts);
-router.post("/accounts", isAuth, checkPermission(perms.Permissions.BankAccountCreateOwn), addBankAccount);
-router.put("/accounts/:id", isAuth, checkPermission(perms.Permissions.BankAccountUpdateOwn), editBankAccount);
-router.delete("/accounts/:id", isAuth, checkPermission(perms.Permissions.BankAccountDeleteOwn), removeBankAccount);
+router.get("/accounts", isAuth as RequestHandler, checkPermission(perms.Permissions.BankAccountViewOwn) as RequestHandler, listBankAccounts as RequestHandler);
+router.post("/accounts", isAuth as RequestHandler, checkPermission(perms.Permissions.BankAccountCreateOwn) as RequestHandler, addBankAccount as RequestHandler);
+router.put("/accounts/:id", isAuth as RequestHandler, checkPermission(perms.Permissions.BankAccountUpdateOwn) as RequestHandler, editBankAccount as RequestHandler);
+router.delete("/accounts/:id", isAuth as RequestHandler, checkPermission(perms.Permissions.BankAccountDeleteOwn) as RequestHandler, removeBankAccount as RequestHandler);
 
 // ----- TRANSACTION CATEGORIES -----
-router.get("/categories", isAuth, checkPermission(perms.Permissions.TransactionCategoryViewOwn), listTransactionCategories);
-router.post("/categories", isAuth, checkPermission(perms.Permissions.TransactionCategoryCreateOwn), addTransactionCategory);
-router.put("/categories/:id", isAuth, checkPermission(perms.Permissions.TransactionCategoryUpdateOwn), editTransactionCategory);
-router.delete("/categories/:id", isAuth, checkPermission(perms.Permissions.TransactionCategoryDeleteOwn), removeTransactionCategory);
+router.get("/categories", isAuth as RequestHandler, checkPermission(perms.Permissions.TransactionCategoryViewOwn) as RequestHandler, listTransactionCategories as RequestHandler);
+router.post("/categories", isAuth as RequestHandler, checkPermission(perms.Permissions.TransactionCategoryCreateOwn) as RequestHandler, addTransactionCategory as RequestHandler);
+router.put("/categories/:id", isAuth as RequestHandler, checkPermission(perms.Permissions.TransactionCategoryUpdateOwn) as RequestHandler, editTransactionCategory as RequestHandler);
+router.delete("/categories/:id", isAuth as RequestHandler, checkPermission(perms.Permissions.TransactionCategoryDeleteOwn) as RequestHandler, removeTransactionCategory as RequestHandler);
 
 export default router;

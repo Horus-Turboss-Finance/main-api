@@ -1,4 +1,3 @@
-import { Request, Response } from "express";
 import { catchSync } from "../middleware/catchError";
 import { getUserIdOrThrow, validateTransaction } from "../utils/validation";
 import { ensureAtLeastOneField, handleCoreResponse } from "../utils/handleCoreResponse";
@@ -14,7 +13,7 @@ import {
  * GET /transaction
  * Liste les transactions récentes de l'utilisateur connecté
  */
-export const getMyTransactions = catchSync(async (req: Request, res: Response) => {
+export const getMyTransactions = catchSync(async (req, res) => {
   const userId = getUserIdOrThrow(req);
 
   const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 50;
@@ -27,7 +26,7 @@ export const getMyTransactions = catchSync(async (req: Request, res: Response) =
  * GET /transaction/:id
  * Récupère une transaction précise de l'utilisateur
  */
-export const getMyTransactionById = catchSync(async (req: Request, res: Response) => {
+export const getMyTransactionById = catchSync(async (req, res) => {
   const userId = getUserIdOrThrow(req);
   const id = parseInt(req.params.id, 10);
 
@@ -38,10 +37,11 @@ export const getMyTransactionById = catchSync(async (req: Request, res: Response
  * POST /transaction
  * Crée une nouvelle transaction
  */
-export const createMyTransaction = catchSync(async (req: Request, res: Response) => {
+export const createMyTransaction = catchSync(async (req, res) => {
   const userId = getUserIdOrThrow(req);
-  let { bankId, categoryId, amount, type, status, date, description, baseCategory } = req.body ?? {};
-
+  let { status, date } = req.body ?? {};
+  const { bankId, categoryId, amount, type, description, baseCategory } = req.body ?? {};
+  
   if(!status) status = "completed";
   if(!date) date = new Date();
 
@@ -56,7 +56,7 @@ export const createMyTransaction = catchSync(async (req: Request, res: Response)
         amount,
         type,
         status,
-        date: new Date(date) ?? new Date(),
+        date: new Date(date),
         baseCategory,
         description,
       }),
@@ -68,7 +68,7 @@ export const createMyTransaction = catchSync(async (req: Request, res: Response)
  * PUT /transaction/:id
  * Met à jour une transaction existante
  */
-export const updateMyTransaction = catchSync(async (req: Request, res: Response) => {
+export const updateMyTransaction = catchSync(async (req, res) => {
   const userId = getUserIdOrThrow(req);
   const id = parseInt(req.params.id, 10);
 
@@ -93,7 +93,7 @@ export const updateMyTransaction = catchSync(async (req: Request, res: Response)
  * DELETE /transaction/:id
  * Supprime une transaction
  */
-export const deleteMyTransaction = catchSync(async (req: Request, res: Response) => {
+export const deleteMyTransaction = catchSync(async (req, res) => {
   const userId = getUserIdOrThrow(req);
   const id = parseInt(req.params.id, 10);
 

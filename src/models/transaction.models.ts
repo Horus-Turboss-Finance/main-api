@@ -32,7 +32,7 @@ const selectColumns = {
   base_category: tTransaction.base_category,
 };
 
-type hackType = {
+export type TransactionFindReturnType = {
   id: number;
   date: Date;
   type: string;
@@ -55,7 +55,7 @@ export class Transaction {
       .limit(limit)
       .offset(offset)
       .executeSelectMany()
-      .then((v: hackType[]) => {
+      .then((v: TransactionFindReturnType[]) => {
         return v.map((aV) => {
           aV.amount = Number(aV.amount)/100;
           return aV
@@ -70,7 +70,7 @@ export class Transaction {
       .where(tTransaction.id.equals(id).and(tTransaction.userId.equals(userId)))
       .select(selectColumns)
       .executeSelectOne()
-      .then((v: hackType) => {
+      .then((v: TransactionFindReturnType) => {
         v.amount = Number(v.amount)/100;
         return v
       })

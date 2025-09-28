@@ -1,11 +1,12 @@
-import { Request } from "express";
 import { RoleType } from "../types/@types.roles";
 import { BankAccount } from "../models/bankAccount.models";
 import { validate as validateEmail } from "email-validator";
 import { ResponseException } from "../middleware/responseException";
 import { TransactionCategory } from "../models/transactionCategory.models";
+import { ALLOWED_BANK_ACCOUNT_TYPES } from "../types/bank-account.types";
+import { FINANCIAL_PLATFORMS_ICON_KEY } from "../types/financial-platforms.types";
 import { defaultCategories, TRANSACTION_ICON_CATEGORY } from "../types/@types.transactionCategoryIcons";
-import { ALLOWED_BANK_ACCOUNT_TYPES, FINANCIAL_PLATFORMS_ICON_KEY } from "../types/@types.bankAccount";
+import { Request } from "express";
 
 /** ===================== Generic Validators ===================== */
 
@@ -127,7 +128,7 @@ export function validateBankAccountInput({
   partial = false,
 }: {
   label?: string;
-  type?: any;
+  type?: unknown;
   balance?: number;
   icon?: string;
   partial?: boolean;
@@ -149,7 +150,7 @@ export function validateTransactionCategoryInput({
   partial = false,
 }: {
   name?: string;
-  icon?: any;
+  icon?: unknown;
   base?: string;
   type?: number;
   partial?: boolean;

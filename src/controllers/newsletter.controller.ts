@@ -1,4 +1,3 @@
-import { Request, Response } from 'express';
 import { catchSync } from "../middleware/catchError";
 import { newMailNewsletterCore, sizeDBCore } from "../services/newsletter.core";
 import { handleCoreResponse } from "../utils/handleCoreResponse";
@@ -7,7 +6,7 @@ import { validateAndNormalizeEmail } from "../utils/validation";
 /**
  * Contrôleur pour l'inscription d'un email à la newsletter.
  */
-export const newMailNewsletter = catchSync(async (req: Request, res: Response) => {
+export const newMailNewsletter = catchSync(async (req, res) => {
   const { email: rawEmail }: { email?: string } = req.body ?? {};
 
   // Validation + normalisation
@@ -20,6 +19,6 @@ export const newMailNewsletter = catchSync(async (req: Request, res: Response) =
 /**
  * Contrôleur pour récupérer la taille de la base de données (newsletter)
  */
-export const sizeDB = catchSync(async (req: Request, res: Response) => {
+export const sizeDB = catchSync(async (req, res) => {
   await handleCoreResponse(() => sizeDBCore(), res);
 });
