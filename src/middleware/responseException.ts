@@ -26,10 +26,11 @@ export const ResponseCodes = Object.fromEntries(
 export type ResponseCodeKey = keyof typeof ResponseCodes;
 export type ResponseCodeValue = typeof ResponseCodes[ResponseCodeKey];
 
-export class ClassResponseExceptions {
+export class ClassResponseExceptions extends Error {
   reason: string;
 
   constructor(reason: unknown) {
+    super()
     this.reason = typeof reason === "string" ? reason : JSON.stringify(reason);
   }
 

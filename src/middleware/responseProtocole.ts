@@ -1,29 +1,35 @@
-import { ClassResponseExceptions, ResponseException } from "./responseException";
+import { ClassResponseExceptions } from "./responseException";
 import { NextFunction, Request, Response } from "express";
 import { logger } from "../services/logger";
+
+
+type responseObj = {
+    status: number;
+    data: string;
+}
+
+type errType = Error
+| responseObj
+
 
 /**
  * Middleware global de gestion des erreurs
  * - Standardise le format JSON de sortie
  * - Log les erreurs 500 côté serveur
  */
-export const ResponseProtocole = (err: Error &  {
-    status: number;
-    data: string;
-} & unknown, req: Request, res: Response, next: NextFunction) => {
-  const originalError = err;
+export const ResponseProtocole = (err: errType, req: Request, res: Response, next: NextFunction) => {
+  let originalError;
 
-  let firstResponse = ResponseException().UnknownError();
-  
-  if (err instanceof ClassResponseExceptions) {
-    firstResponse = err;
+  if(err instanceof Error){
+    originalError = err;
+    err = new ClassResponseExceptions("").UnknownError()
   }
 
   // Log uniquement les erreurs serveur critiques
-  if (!firstResponse || firstResponse.status >= 500) {
+  if (err.status >= 500) {
     logger.error("Server Error", {
-      message: originalError.message,
-      stack: originalError.stack,
+      message: originalError?.message,
+      stack: originalError?.stack,
       url: req.originalUrl,
       method: req.method,
       ip: req.ip

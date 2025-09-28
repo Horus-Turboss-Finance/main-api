@@ -13,7 +13,6 @@ import { calculateReserve } from "../utils/kiff/calculate-reserve";
 import { getDaysLeftInMonth } from "../utils/date/get-days-left-in-month";
 import { computeAnnualMetrics } from "../utils/kiff/compute-annual-metrics";
 import { computeMonthlyMetrics } from "../utils/kiff/compute-monthly-metrics";
-import { calculateDailyAvg } from "../utils/transactions/calculate-daily-avg";
 import { calculateStabilityScore } from "../utils/kiff/calculate-stability-score";
 import { calculateSurvivalMonths } from "../utils/kiff/calculate-survival-months";
 import { KiffOptions, KiffResult } from "../types/kiff-score.types";
@@ -49,10 +48,19 @@ export async function calculateKiffScoreForUser(userId: number, options: KiffOpt
         fetchUserTransactions(userId, options.transactionLimit ?? 10000),
       ]);
 
-      const mounthFilter = new Date();
-      mounthFilter.setMonth(mounthFilter.getMonth() - 2);
+      const monthFilter = new Date();
+      monthFilter.setMonth(monthFilter.getMonth() - 2);
 
-      const isLowData = transactions.length < 10 || new Set(transactions.filter(t => new Date(t.date).getTime() > mounthFilter.getTime() )).size < 2;
+      const recentMonths = new Set(
+        transactions
+          .filter(t => new Date(t.date).getTime() > monthFilter.getTime())
+          .map(t => {
+            const d = new Date(t.date);
+            return `${d.getFullYear()}-${d.getMonth()}`
+          })
+      );
+
+      const isLowData = transactions.length < 10 || recentMonths.size < 2;
 
       const reserve = calculateReserve(accounts);
       const { credits, debits } = splitTransactions(transactions);
@@ -76,52 +84,45 @@ export async function calculateKiffScoreForUser(userId: number, options: KiffOpt
 
       if (isLowData) {
         const isNegativeOrNearZero = reserve <= 0 || monthly.monthlyRemainingBudget < 0;
-        const reservePerDay = reserve / Math.max(1, daysLeftInMonth);
-        const bvmPerDay = BVM / 30;
-
-        const reserveFactor = Math.min(1, reservePerDay / bvmPerDay);
-        const budgetFactor = Math.min(1, Math.max(0, monthly.monthlyRemainingBudget / (BVM / 2)));
+        const bvmPerDay = BVM * 12 / 365.245;
 
         if (isNegativeOrNearZero && isOutlierCase) {
-          // Fallback très prudent si données faibles et transaction suspecte
-          kiffRaw = 0.2 + 0.3 * reserveFactor;
+          kiffRaw = bvmPerDay;
         } else {
-          const base = 0.1 + 0.4 * reserveFactor + 0.2 * budgetFactor;
-          kiffRaw = base * dataConfidence + (1 - dataConfidence) * 0.1;
-          kiffRaw = Math.min(0.95, Math.max(0.05, kiffRaw));
+          // Estimation du montant quotidien possible
+          const reservePerDay = reserve / Math.max(1, daysLeftInMonth);
+          const budgetPerDay = monthly.monthlyRemainingBudget / Math.max(1, daysLeftInMonth);
+
+          // On combine les deux (pondérés)
+          const weightedDailyBudget = (
+            0.6 * Math.max(0, reservePerDay) +
+            0.4 * Math.max(0, budgetPerDay)
+          );
+
+          // Ajustement par data confidence
+          const safeKiff = weightedDailyBudget * (0.5 + 0.5 * dataConfidence); // 50% de réduction si dataConfidence faible
+
+          // On borne pour éviter les excès
+          kiffRaw = Math.max(0.5, Math.min(safeKiff, 3 * (BVM / 30))); // borné entre 0.5€ et 3 fois BVM/jour
         }
 
         cushion = calculateCushion(reserve, BVM * 12);
-        adjustedKiff = Math.min(1, kiffRaw + cushion * 0.5);
+        adjustedKiff = Math.max(1, kiffRaw + cushion * 0.5);
       } else {
         cushion = calculateCushion(reserve, annual.annualBudget);
-        adjustedKiff = Math.min(1, kiffRaw + cushion);
+        adjustedKiff = Math.max(1, kiffRaw + cushion);
       }
 
-      const survivalMonths = calculateSurvivalMonths(debits);
+      const survivalMonths = calculateSurvivalMonths(reserve, debits);
       const { mood, stabilityScore } = calculateStabilityScore(survivalMonths, kiffRaw);
 
       return {
         mode: isLowData ? 'low-data' : 'normal',
-        nb_personne_foyer: nbPeople,
-        BVM: round2(BVM),
-        budget_mensuel_restant: round2(monthly.monthlyRemainingBudget),
-        kiff_brut_mensuel: round2(monthly.monthlyKiff),
-        budget_annuel: round2(annual.annualBudget),
-        kiff_brut_annuel: round2(annual.annualKiff),
         kiff_brut: round2(kiffRaw),
-        reserve_liquide: round2(reserve),
-        coussin: round2(cushion),
         kiff_ajuste: round2(adjustedKiff),
         mois_survie: round2(survivalMonths),
         score_stabilite: round2(stabilityScore),
         mood,
-        details: {
-          charge_annuelle: round2(annual.annualCharge),
-          projet_pondere: round2(annual.weightedProjects),
-          revenu_annuel: round2(annual.annualRevenue),
-          moyenne_depenses_journalier: round2(calculateDailyAvg(debits)),
-        },
       };
     }, {},
     "kiff-score",
