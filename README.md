@@ -14,6 +14,8 @@ Le **backend de Cash Sights** constitue la brique serveur de l’écosystème. I
 
 🔗 Frontend associé : [Voir le dépôt](https://github.com/Horus-Turboss-Finance/web-interface)
 
+![Alt](https://repobeats.axiom.co/api/embed/417924da5d4eeace2d8cbf3980404ad1ba6f21c7.svg "Repobeats analytics image")
+
 ## ⚙️ Stack technique
 * **Node.js 23.6.0** - Runtime JavaScript côté serveur
 * **Express.js** - Framework HTTP minimaliste
