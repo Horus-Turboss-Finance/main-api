@@ -2,7 +2,7 @@ module.exports = {
   apps : [{
     name:"main-api",
     script: "./dist/index.js",
-    node_args: "--env-file=./production.env",
+    node_args: "--env-file=production.env",
     instances: 2,
     cron_restart: "0 0 * * *",
     exec_mode: "cluster",
