@@ -5,8 +5,8 @@
   "license": "ISC",
   "scripts": {
     "commit": "gitmoji -c",
-    "age:c:api": "age -a -o ./crypted-env -R ./keys/age-public.pem api.production.env",
-    "age:d:api": "age -d -o ./production.env -i ./keys/sops-key ./crypted-env",
+    "age:c:api": "age -a -o ./crypted-env -R ./keys/age-public.pub api.production.env",
+    "age:d:api": "age -d -o ./production.env -i ./keys/sops-key.pem ./crypted-env",
     "production:d:api": "age -d -o ./production.env -i ~/.ssh/age-key crypted-env",
     "dev": "node -r ts-node/register --env-file=development.env ./src/index.ts",
     "build": "tsc -p ./tsconfig.json",
