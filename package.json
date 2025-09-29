@@ -12,7 +12,7 @@
     "build": "tsc -p ./tsconfig.json",
     "staging-preprod": "npm run age:d:api && pm2 startOrReload ./ecosystem.config.js",
     "lint": "eslint .",
-    "preproduction": "npm install && npm run build && npm run production:d:api",
+    "preproduction": "npm run build",
     "production": "npm run preproduction && pm2 startOrReload ./ecosystem.config.js"
   },
   "description": "",
