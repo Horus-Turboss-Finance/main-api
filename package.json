@@ -13,7 +13,7 @@
     "staging-preprod": "npm run age:d:api && pm2 startOrReload ./ecosystem.config.js",
     "lint": "eslint .",
     "preproduction": "npm install && npm run build && npm run production:d:api",
-    "production": "pm2 startOrReload ./ecosystem.config.js"
+    "production": "npm run preproduction && pm2 startOrReload ./ecosystem.config.js"
   },
   "description": "",
   "dependencies": {
