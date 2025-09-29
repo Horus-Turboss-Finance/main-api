@@ -20,6 +20,7 @@ import { requestLogger } from "./middleware/requestLogger";
 import { securityLogger } from "./middleware/securityLogger";
 import { ResponseException } from "./middleware/responseException";
 import { ResponseProtocole } from "./middleware/responseProtocole";
+import { validateContentType } from "./middleware/validateContentType";
 
 const app = express();
 
@@ -78,6 +79,8 @@ app.use(fileUpload({
     responseOnLimit: JSON.stringify(ResponseException("Fichier trop volumineux").PayloadTooLarge()),
     parseNested: true
 }))
+
+app.use(validateContentType)
 
 /** ===================== Metrics ===================== */
 app.use("/metrics", metricsRoute);

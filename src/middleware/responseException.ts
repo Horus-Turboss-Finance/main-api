@@ -4,6 +4,7 @@ const httpResponseDefinitions = [
   { key: "InvalidToken", code: 498 },
   { key: "TooManyRequests", code: 429 },
   { key: "IMATeapot", code: 418 },
+  { key: "UnsupportedMediaType", code: 415 },
   { key: "PayloadTooLarge", code: 413 },
   { key: "NotFound", code: 404 },
   { key: "MethodNotAllowed", code: 405 },
@@ -48,6 +49,10 @@ export class ClassResponseExceptions extends Error {
 
   IMATeapot() {
     return { status: ResponseCodes.IMATeapot, data: this.reason };
+  }
+
+  UnsupportedMediaType() {
+    return { status: ResponseCodes.UnsupportedMediaType, data: this.reason };
   }
 
   PayloadTooLarge() {
